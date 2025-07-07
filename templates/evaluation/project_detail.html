@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ project.title }}</title>
+  </head>
+  <body>
+    <h1>{{ project.title }}</h1>
+    <p>{{ project.description }}</p>
+
+    <p>평균 점수: {{ avg_score|floatformat:1 }} (투표 수: {{ vote_count }})</p>
+
+    {% if can_vote %} {% if user.is_authenticated %} {% if user_voted %}
+    <p>이미 투표하셨습니다.</p>
+    {% else %}
+    <form method="post" action="{% url 'evaluation:project_vote' project.pk %}">
+      {% csrf_token %}
+      <label for="score">점수 (1~5):</label>
+      <select name="score" id="score">
+        {% for i in "12345" %}
+        <option value="{{ i }}">{{ i }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit">투표하기</button>
+    </form>
+    {% endif %} {% else %}
+    <p>로그인 후 투표할 수 있습니다. <a href="/accounts/login/">로그인</a></p>
+    {% endif %} {% else %}
+    <p>현재 투표 기간이 아닙니다.</p>
+    {% endif %}
+
+    <p>
+      <a href="{% url 'evaluation:project_result' project.pk %}"
+        >투표 결과 보기</a
+      >
+    </p>
+    <p><a href="{% url 'evaluation:project_list' %}">목록으로 돌아가기</a></p>
+  </body>
+</html>
