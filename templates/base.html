@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}프로젝트 평가{% endblock %}</title>
+  </head>
+  <body>
+    <header>
+      <h1><a href="{% url 'project_list' %}">프로젝트 평가 사이트</a></h1>
+      <hr />
+    </header>
+
+    <main>{% block content %} {% endblock %}</main>
+
+    <footer>
+      <hr />
+      <p>© 2025 프로젝트 평가</p>
+    </footer>
+  </body>
+</html>
