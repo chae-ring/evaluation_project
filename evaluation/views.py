@@ -1,79 +1,91 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Project, Vote
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.utils import timezone
-from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from django.db.models import Avg
+from django.contrib import messages
 
+from .models import Project, Vote
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('project_list')
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})
 
 def project_list(request):
     projects = Project.objects.all()
     for project in projects:
         votes = Vote.objects.filter(project=project)
         project.avg_score = votes.aggregate(Avg('score'))['score__avg'] or 0
-        project.vote_count = votes.count()
     return render(request, 'evaluation/project_list.html', {'projects': projects})
 
-def project_detail(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+def project_detail(request, id):
+    project = get_object_or_404(Project, pk=id)
     votes = Vote.objects.filter(project=project)
     avg_score = votes.aggregate(Avg('score'))['score__avg'] or 0
-    vote_count = votes.count()
 
-    now = timezone.now()
-    can_vote = True
-    if project.vote_type == 'period':
-        if project.vote_start and project.vote_end:
-            if not (project.vote_start <= now <= project.vote_end):
-                can_vote = False
-    user_voted = False
+    user_vote = None
     if request.user.is_authenticated:
-        user_voted = votes.filter(user=request.user).exists()
+        user_vote = Vote.objects.filter(user=request.user, project=project).first()
+
+    can_vote = False
+    if project.vote_type == 'always':
+        can_vote = True
+    elif project.vote_type == 'period':
+        from django.utils import timezone
+        now = timezone.now()
+        if project.vote_start <= now <= project.vote_end:
+            can_vote = True
 
     context = {
         'project': project,
         'avg_score': avg_score,
-        'vote_count': vote_count,
+        'user_vote': user_vote,
         'can_vote': can_vote,
-        'user_voted': user_voted,
     }
     return render(request, 'evaluation/project_detail.html', context)
 
 @login_required
-def project_vote(request, pk):
-    project = get_object_or_404(Project, pk=pk)
-
-    now = timezone.now()
-    if project.vote_type == 'period':
-        if not (project.vote_start and project.vote_end and project.vote_start <= now <= project.vote_end):
-            messages.error(request, "현재 투표 기간이 아닙니다.")
-            return redirect('evaluation:project_detail', pk=pk)
-
-    existing_vote = Vote.objects.filter(project=project, user=request.user).first()
-    if existing_vote:
-        messages.error(request, "이미 투표하셨습니다.")
-        return redirect('evaluation:project_detail', pk=pk)
-
+def project_vote(request, id):
+    project = get_object_or_404(Project, pk=id)
     if request.method == 'POST':
         score = int(request.POST.get('score', 0))
         if score < 1 or score > 5:
-            messages.error(request, "1점에서 5점 사이의 점수를 입력하세요.")
-            return redirect('evaluation:project_detail', pk=pk)
-        Vote.objects.create(project=project, user=request.user, score=score)
-        messages.success(request, "투표가 완료되었습니다.")
-        return redirect('evaluation:project_result', pk=pk)
+            messages.error(request, '점수는 1에서 5 사이여야 합니다.')
+            return redirect('project_detail', id=id)
 
-    return redirect('evaluation:project_detail', pk=pk)
+        if Vote.objects.filter(user=request.user, project=project).exists():
+            messages.error(request, '이미 투표하셨습니다.')
+            return redirect('project_detail', id=id)
 
-def project_result(request, pk):
-    project = get_object_or_404(Project, pk=pk)
+        from django.utils import timezone
+        now = timezone.now()
+        if project.vote_type == 'period':
+            if not (project.vote_start <= now <= project.vote_end):
+                messages.error(request, '투표 기간이 아닙니다.')
+                return redirect('project_detail', id=id)
+
+        Vote.objects.create(user=request.user, project=project, score=score)
+        messages.success(request, '투표가 완료되었습니다.')
+        return redirect('project_result', id=id)
+
+    return redirect('project_detail', id=id)
+
+def project_result(request, id):
+    project = get_object_or_404(Project, pk=id)
     votes = Vote.objects.filter(project=project)
     avg_score = votes.aggregate(Avg('score'))['score__avg'] or 0
-    vote_count = votes.count()
-
+    total_votes = votes.count()
     context = {
         'project': project,
         'avg_score': avg_score,
-        'vote_count': vote_count,
+        'total_votes': total_votes,
     }
     return render(request, 'evaluation/project_result.html', context)
+

@@ -6,7 +6,6 @@ class Project(models.Model):
         ('always', '상시'),
         ('period', '기간 설정'),
     ]
-
     title = models.CharField(max_length=255)
     description = models.TextField()
     vote_type = models.CharField(max_length=10, choices=VOTE_TYPE_CHOICES, default='always')
@@ -20,7 +19,7 @@ class Project(models.Model):
 class Vote(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    score = models.PositiveSmallIntegerField()
+    score = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -28,3 +27,4 @@ class Vote(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.project.title} - {self.score}'
+

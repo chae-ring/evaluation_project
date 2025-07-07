@@ -1,22 +1,30 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>프로젝트 리스트</title>
-  </head>
-  <body>
-    <h1>프로젝트 리스트</h1>
-    <ul>
-      {% for project in projects %}
-      <li>
-        <a href="{% url 'evaluation:project_detail' project.pk %}"
-          >{{ project.title }}</a
-        >
-        - 평균 점수: {{ project.avg_score|floatformat:1 }} (투표 수: {{
-        project.vote_count }})
-      </li>
-      {% empty %}
-      <li>등록된 프로젝트가 없습니다.</li>
-      {% endfor %}
-    </ul>
-  </body>
-</html>
+{% extends "base.html" %} {% block content %}
+<h1>프로젝트 리스트</h1>
+
+{% if user.is_authenticated %}
+<p>안녕하세요, {{ user.username }}님!</p>
+<form method="post" action="{% url 'logout' %}">
+  {% csrf_token %}
+  <button type="submit">로그아웃</button>
+</form>
+
+{% if user.is_staff %}
+<p><a href="/admin/">프로젝트 등록하기 (관리자용)</a></p>
+{% endif %} {% else %}
+<p>
+  <a href="{% url 'login' %}">로그인</a> /
+  <a href="{% url 'signup' %}">회원가입</a>
+</p>
+{% endif %}
+
+<ul>
+  {% for project in projects %}
+  <li>
+    <a href="{% url 'project_detail' project.id %}">{{ project.title }}</a>
+    (평균 점수: {{ project.avg_score|floatformat:1 }})
+  </li>
+  {% empty %}
+  <li>등록된 프로젝트가 없습니다.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

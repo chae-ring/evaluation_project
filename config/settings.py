@@ -128,3 +128,5 @@ LOGIN_REDIRECT_URL = '/'
 
 # 로그아웃 후 리다이렉트할 URL
 LOGOUT_REDIRECT_URL = '/'
+
+
