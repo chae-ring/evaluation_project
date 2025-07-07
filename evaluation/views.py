@@ -3,19 +3,21 @@ from .models import Project, Vote
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.contrib import messages
+from django.db.models import Avg
+
 
 def project_list(request):
     projects = Project.objects.all()
     for project in projects:
         votes = Vote.objects.filter(project=project)
-        project.avg_score = votes.aggregate(models.Avg('score'))['score__avg'] or 0
+        project.avg_score = votes.aggregate(Avg('score'))['score__avg'] or 0
         project.vote_count = votes.count()
     return render(request, 'evaluation/project_list.html', {'projects': projects})
 
 def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk)
     votes = Vote.objects.filter(project=project)
-    avg_score = votes.aggregate(models.Avg('score'))['score__avg'] or 0
+    avg_score = votes.aggregate(Avg('score'))['score__avg'] or 0
     vote_count = votes.count()
 
     now = timezone.now()
@@ -66,7 +68,7 @@ def project_vote(request, pk):
 def project_result(request, pk):
     project = get_object_or_404(Project, pk=pk)
     votes = Vote.objects.filter(project=project)
-    avg_score = votes.aggregate(models.Avg('score'))['score__avg'] or 0
+    avg_score = votes.aggregate(Avg('score'))['score__avg'] or 0
     vote_count = votes.count()
 
     context = {
