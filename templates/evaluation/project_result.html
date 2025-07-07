@@ -1,18 +1,4 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>{{ project.title }} - 투표 결과</title>
-  </head>
-  <body>
-    <h1>{{ project.title }} - 투표 결과</h1>
-    <p>평균 점수: {{ avg_score|floatformat:1 }}</p>
-    <p>총 투표 수: {{ vote_count }}</p>
-
-    <p>
-      <a href="{% url 'evaluation:project_detail' project.pk %}"
-        >프로젝트 상세로 돌아가기</a
-      >
-    </p>
-    <p><a href="{% url 'evaluation:project_list' %}">목록으로 돌아가기</a></p>
-  </body>
-</html>
+<h1>{{ project.title }} - 투표 결과</h1>
+<p>평균 점수: {{ avg_score|floatformat:1 }}</p>
+<p>총 투표 수: {{ total_votes }}</p>
+<p><a href="{% url 'project_detail' project.id %}">프로젝트 상세 보기</a></p>
