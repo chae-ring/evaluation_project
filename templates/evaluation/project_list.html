@@ -1,30 +1,34 @@
-{% extends "base.html" %} {% block content %}
-<h1>프로젝트 리스트</h1>
+{% extends "base.html" %}
+{% load static %}
 
-{% if user.is_authenticated %}
-<p>안녕하세요, {{ user.username }}님!</p>
-<form method="post" action="{% url 'logout' %}">
-  {% csrf_token %}
-  <button type="submit">로그아웃</button>
-</form>
+{% block title %}프로젝트 리스트{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/project_list.css' %}" />
+{% endblock %}
 
-{% if user.is_staff %}
-<p><a href="/admin/">프로젝트 등록하기 (관리자용)</a></p>
-{% endif %} {% else %}
-<p>
-  <a href="{% url 'login' %}">로그인</a> /
-  <a href="{% url 'signup' %}">회원가입</a>
-</p>
-{% endif %}
+{% block content %}
+<h1 class="page-header">프로젝트 리스트</h1>
 
-<ul>
+<ul class="project-list">
   {% for project in projects %}
-  <li>
-    <a href="{% url 'project_detail' project.id %}">{{ project.title }}</a>
-    (평균 점수: {{ project.avg_score|floatformat:1 }})
+  <li class="project-card">
+    <a href="{% url 'project_detail' project.id %}" class="project-title">{{ project.title }}</a>
+    <div class="score-area">
+      <div class="stars">
+        {% for i in "12345" %}
+          {% if forloop.counter <= project.avg_score|floatformat:0 %}
+            <span class="star filled">★</span>
+          {% else %}
+            <span class="star">☆</span>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <span class="score-number">{{ project.avg_score|floatformat:1 }}</span>
+    </div>
   </li>
   {% empty %}
   <li>등록된 프로젝트가 없습니다.</li>
   {% endfor %}
 </ul>
 {% endblock %}
+

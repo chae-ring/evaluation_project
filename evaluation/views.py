@@ -4,7 +4,6 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from django.db.models import Avg
 from django.contrib import messages
-
 from .models import Project, Vote
 
 def signup(request):
@@ -12,6 +11,8 @@ def signup(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.is_staff = False  # 일반 사용자로 설정
+            user.save()
             login(request, user)
             return redirect('project_list')
     else:
@@ -88,4 +89,5 @@ def project_result(request, id):
         'total_votes': total_votes,
     }
     return render(request, 'evaluation/project_result.html', context)
+
 

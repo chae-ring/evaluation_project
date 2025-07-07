@@ -1,0 +1,79 @@
+/* Reset & 기본 폰트 */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: "Noto Sans KR", sans-serif;
+  background: #fff;
+  color: #222;
+}
+
+a {
+  text-decoration: none;
+  color: #0066cc;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+/* 네비게이션 바 */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #004a99;
+  padding: 1rem 2rem;
+  color: white;
+}
+
+.navbar-left .home-btn {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.navbar-right .btn,
+.logout-btn {
+  background-color: #007bff;
+  border: none;
+  padding: 0.4rem 1rem;
+  color: white;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  text-align: center;
+}
+
+.navbar-right .btn:hover,
+.logout-btn:hover {
+  background-color: #0056b3;
+}
+
+.user-name {
+  margin-right: 1rem;
+  font-weight: 600;
+}
+
+.logout-form {
+  display: inline;
+}
+
+/* 푸터 */
+.footer {
+  text-align: center;
+  padding: 1.5rem 0;
+  font-size: 0.9rem;
+  color: #777;
+  border-top: 1px solid #ddd;
+  margin-top: 4rem;
+}
