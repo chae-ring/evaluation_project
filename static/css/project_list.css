@@ -1,54 +1,81 @@
 .page-header {
   font-size: 2rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
   color: #004a99;
-  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.sort-filter {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #004a99;
+}
+
+.sort-link {
+  color: #007bff;
+  text-decoration: none;
+  margin: 0 0.3rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.sort-link:hover {
+  color: #0056b3;
+}
+
+.sort-link.active {
+  font-weight: 700;
+  color: #004a99;
+  text-decoration: underline;
 }
 
 .project-list {
   list-style: none;
   padding: 0;
-  margin: 0 auto;
-  max-width: 600px;
+  margin: 0;
 }
 
 .project-card {
-  border: 1px solid #007bff;
+  padding: 1rem;
+  border: 1px solid #ddd;
   border-radius: 6px;
-  padding: 1rem 1.5rem;
   margin-bottom: 1rem;
-  background-color: #f0f8ff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background-color: #f9f9f9;
   transition: box-shadow 0.3s ease;
 }
 
 .project-card:hover {
-  box-shadow: 0 4px 8px rgba(0, 75, 153, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .project-title {
-  font-weight: 600;
   font-size: 1.25rem;
+  font-weight: 700;
   color: #004a99;
+  text-decoration: none;
+}
+
+.project-title:hover {
+  text-decoration: underline;
 }
 
 .score-area {
   display: flex;
   align-items: center;
+  margin-top: 0.5rem;
   gap: 0.5rem;
+  font-size: 1.1rem;
+  color: #004a99;
 }
 
 .stars {
-  color: #ffd700; /* 별색 골드 */
-  font-size: 1.1rem;
+  font-size: 1.3rem;
 }
 
 .star {
-  margin-right: 2px;
   color: #ccc;
+  margin-right: 2px;
 }
 
 .star.filled {
@@ -57,5 +84,4 @@
 
 .score-number {
   font-weight: 700;
-  color: #004a99;
 }

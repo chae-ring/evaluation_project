@@ -11,11 +11,10 @@
   <body>
     <header class="navbar">
       <div class="navbar-left">
-        <a href="{% url 'project_list' %}" class="home-btn">가제 2025</a>
+        <a href="{% url 'project_list' %}" class="home-btn">VoteRank</a>
       </div>
       <div class="navbar-right">
         <a href="/admin/" class="btn register-btn">등록하기</a>
-        <!-- 관리자 페이지로 고정 -->
 
         {% if user.is_authenticated %}
         <span class="user-name">{{ user.username }}님</span>

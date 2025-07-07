@@ -9,10 +9,10 @@
 {% block content %}
 <h1 class="result-title">{{ project.title }} - 투표 결과</h1>
 <div class="avg-score-block">
-  평균 점수: 
+  평균 점수:
   <span class="stars">
     {% for i in "12345" %}
-      {% if forloop.counter <= avg_score|floatformat:0 %}
+      {% if forloop.counter <= avg_score_int %}
         <span class="star filled">★</span>
       {% else %}
         <span class="star">☆</span>

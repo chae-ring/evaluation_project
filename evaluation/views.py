@@ -11,7 +11,7 @@ def signup(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            user.is_staff = False  # 일반 사용자로 설정
+            user.is_staff = False  
             user.save()
             login(request, user)
             return redirect('project_list')
@@ -20,16 +20,28 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 def project_list(request):
-    projects = Project.objects.all()
+    sort = request.GET.get('sort', 'desc') 
+
+    projects = Project.objects.annotate(avg_score=Avg('vote__score'))
+
+    if sort == 'asc':
+        projects = projects.order_by('avg_score')
+    else:
+        projects = projects.order_by('-avg_score')
+
     for project in projects:
-        votes = Vote.objects.filter(project=project)
-        project.avg_score = votes.aggregate(Avg('score'))['score__avg'] or 0
-    return render(request, 'evaluation/project_list.html', {'projects': projects})
+        project.avg_score = project.avg_score or 0
+        project.avg_score_int = int(round(project.avg_score))
+
+    context = {'projects': projects, 'sort': sort}
+    return render(request, 'evaluation/project_list.html', context)
+
 
 def project_detail(request, id):
     project = get_object_or_404(Project, pk=id)
     votes = Vote.objects.filter(project=project)
     avg_score = votes.aggregate(Avg('score'))['score__avg'] or 0
+    avg_score_int = int(round(avg_score))  
 
     user_vote = None
     if request.user.is_authenticated:
@@ -47,6 +59,7 @@ def project_detail(request, id):
     context = {
         'project': project,
         'avg_score': avg_score,
+        'avg_score_int': avg_score_int,  
         'user_vote': user_vote,
         'can_vote': can_vote,
     }
@@ -78,16 +91,22 @@ def project_vote(request, id):
 
     return redirect('project_detail', id=id)
 
+from django.db.models import Avg
+
 def project_result(request, id):
     project = get_object_or_404(Project, pk=id)
     votes = Vote.objects.filter(project=project)
     avg_score = votes.aggregate(Avg('score'))['score__avg'] or 0
     total_votes = votes.count()
+    avg_score_int = int(round(avg_score)) 
+
     context = {
         'project': project,
         'avg_score': avg_score,
+        'avg_score_int': avg_score_int, 
         'total_votes': total_votes,
     }
     return render(request, 'evaluation/project_result.html', context)
+
 
 
