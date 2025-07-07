@@ -1,20 +1,39 @@
+{% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>{% block title %}프로젝트 평가{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}2025 프로젝트 평가{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
+    {% block extra_css %}{% endblock %}
   </head>
   <body>
-    <header>
-      <h1><a href="{% url 'project_list' %}">프로젝트 평가 사이트</a></h1>
-      <hr />
+    <header class="navbar">
+      <div class="navbar-left">
+        <a href="{% url 'project_list' %}" class="home-btn">가제 2025</a>
+      </div>
+      <div class="navbar-right">
+        <a href="/admin/" class="btn register-btn">등록하기</a>
+        <!-- 관리자 페이지로 고정 -->
+
+        {% if user.is_authenticated %}
+        <span class="user-name">{{ user.username }}님</span>
+        <form method="post" action="{% url 'logout' %}" class="logout-form">
+          {% csrf_token %}
+          <button type="submit" class="btn logout-btn">로그아웃</button>
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn">로그인</a>
+        <a href="{% url 'signup' %}" class="btn">회원가입</a>
+        {% endif %}
+      </div>
     </header>
 
-    <main>{% block content %} {% endblock %}</main>
+    <main class="container">{% block content %}{% endblock %}</main>
 
-    <footer>
-      <hr />
-      <p>© 2025 프로젝트 평가</p>
+    <footer class="footer">
+      <p>2025 프로젝트 평가</p>
     </footer>
   </body>
 </html>
